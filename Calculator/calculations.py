@@ -10,3 +10,9 @@ def mul(a,b):
 
 def div(a,b):
     return a/b
+
+def pow(a,b):
+    return a**b
+
+def rad(a,b=2):
+    return a**(1/b)
