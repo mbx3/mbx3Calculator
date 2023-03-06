@@ -18,12 +18,17 @@ def first_priority_parenthes(txt:str):
 
 def first_priority_expression(txt:str):
     m=re.search(r'((?:^-[0-9]+(?:\.[0-9]*)?|[0-9]+(?:\.[0-9]*)?))(\^|\$)(-?[0-9]+(?:\.[0-9]*)?)',txt)
-    if m != None: return m.groups()
+    if m != None: return (m.start(),m.end()-1), m.groups()
     m=re.search(r'((?:^-[0-9]+(?:\.[0-9]*)?|[0-9]+(?:\.[0-9]*)?))(\*|\/)(-?[0-9]+(?:\.[0-9]*)?)',txt)
-    if m != None: return m.groups()
+    if m != None: return (m.start(),m.end()-1), m.groups()
     m=re.search(r'((?:^-[0-9]+(?:\.[0-9]*)?|[0-9]+(?:\.[0-9]*)?))(\+|\-)(-?[0-9]+(?:\.[0-9]*)?)',txt)
-    if m != None: return m.groups()
+    if m != None: return (m.start(),m.end()-1), m.groups()
+    return (0,len(txt)-1), txt
 
 def remove_unnecessary_parentheses(txt:str):
     out = re.sub(r'\((-?[0-9]+(?:\.[0-9]*)?)\)',r'\1',txt)
     return out
+
+def is_calculation_end(txt:str):
+    if re.match(r'^-?[0-9]+(?:\.[0-9]*)?$',txt): return True
+    return False
