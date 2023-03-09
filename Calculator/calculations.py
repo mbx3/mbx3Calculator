@@ -1,4 +1,4 @@
-from string_work import *
+from Calculator.string_work import *
 import re
 
 def Osum(a,b):
@@ -35,10 +35,10 @@ class Node:
 def operator_to_function(operator:str):
     if operator == '+' : return Osum        
     if operator == '-' : return Osub        
-    if operator == '*' : return Omul        
-    if operator == '/' : return Odiv        
+    if operator == '×' : return Omul        
+    if operator == '÷' : return Odiv        
     if operator == '^' : return Opow        
-    if operator == '$' : return Orad        
+    if operator == '√' : return Orad        
 
 def calculate(txt:str):
     while True:
@@ -50,5 +50,5 @@ def calculate(txt:str):
         fpeIndex, fpe = first_priority_expression(fpp)
         new_txt = Node(operator_to_function(fpe[1]),float(fpe[0]),float(fpe[2])).calc_node() if type(fpe) == tuple else fpe
         txt = txt[:fppIndex[0]+fpeIndex[0]] + str(new_txt) + txt[fppIndex[0]+1+fpeIndex[1]:]
-        if is_calculation_end(txt): return txt
+        if is_calculation_end(txt): return str(int(float(txt))) if int(float(txt)) == float(txt) else txt
 
