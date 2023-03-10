@@ -48,7 +48,9 @@ def calculate(txt:str):
             txt=remove_unnecessary_parentheses(txt)
         fppIndex, fpp = first_priority_parenthes(txt)
         fpeIndex, fpe = first_priority_expression(fpp)
+        prev_txt = txt
         new_txt = Node(operator_to_function(fpe[1]),float(fpe[0]),float(fpe[2])).calc_node() if type(fpe) == tuple else fpe
         txt = txt[:fppIndex[0]+fpeIndex[0]] + str(new_txt) + txt[fppIndex[0]+1+fpeIndex[1]:]
         if is_calculation_end(txt): return str(int(float(txt))) if int(float(txt)) == float(txt) else txt
+        elif prev_txt == txt : raise ValueError("Can't Calculate this expression!")
 
