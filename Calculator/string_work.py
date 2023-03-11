@@ -19,7 +19,7 @@ def first_priority_parenthes(txt:str):
 def first_priority_expression(txt:str):
     m=re.search(r'((?:^-[0-9]+(?:\.[0-9]*)?|[0-9]+(?:\.[0-9]*)?))(\^|\√)(-?[0-9]+(?:\.[0-9]*)?)',txt)
     if m != None: return (m.start(),m.end()-1), m.groups()
-    m=re.search(r'((?:^-[0-9]+(?:\.[0-9]*)?|[0-9]+(?:\.[0-9]*)?))(\×|\÷)(-?[0-9]+(?:\.[0-9]*)?)',txt)
+    m=re.search(r'((?:^-[0-9]+(?:\.[0-9]*)?|[0-9]+(?:\.[0-9]*)?))((?:mod)|\×|\÷)(-?[0-9]+(?:\.[0-9]*)?)',txt)
     if m != None: return (m.start(),m.end()-1), m.groups()
     m=re.search(r'((?:^-[0-9]+(?:\.[0-9]*)?|[0-9]+(?:\.[0-9]*)?))(\+|\-)(-?[0-9]+(?:\.[0-9]*)?)',txt)
     if m != None: return (m.start(),m.end()-1), m.groups()

@@ -19,6 +19,9 @@ def Opow(a,b):
 def Orad(a,b=2):
     return a**(1/b)
 
+def Omod(a,b):
+    return a%b
+
 OPERATOR_FUNCTIONS=[Osum,Osub,Omul,Odiv,Opow,Orad]
 
 class Node:
@@ -39,6 +42,7 @@ def operator_to_function(operator:str):
     if operator == '÷' : return Odiv        
     if operator == '^' : return Opow        
     if operator == '√' : return Orad        
+    if operator == 'mod' : return Omod        
 
 def calculate(txt:str):
     while True:

@@ -5,7 +5,7 @@ from Calculator import calculations
 
 class GUI:
     BUTTONS_TEXT=[['(',')','C','<--'],
-                ['N','^','√','+'],
+                ['mod','^','√','+'],
                 ['1','2','3','-'],
                 ['4','5','6','×'],
                 ['7','8','9','÷'],
@@ -75,7 +75,7 @@ class GUI:
                 elif txt == 'C' : btn_func = self.clear_text
                 elif txt == '<--': btn_func = self.delete_char
                 elif txt == '=': btn_func = self.calculate
-                else: btn_func = partial(self.add_text,txt)
+                else: btn_func = lambda x=txt: self.add_text(x)
                 btn = ttk.Button(self.mainFrame,text=txt,command=btn_func)
                 btn.grid(column=i,row=j,padx=2,pady=2,sticky=tk.NSEW)
 
@@ -91,18 +91,33 @@ class GUI:
         self.root.mainloop()    
 
     def add_text(self,event):
-        if type(event) == str: 
+        if type(event) == str:
+            if event == ')' and self.calculationsText.get().count(')')>=self.calculationsText.get().count('('):
+                return None
+            elif len(self.calculationsText.get())>0 and ((self.calculationsText.get()[-1] in '01234567890.' and event == '(') or (self.calculationsText.get()[-1] == ')' and event in '01234567890.' )):
+                self.add_text('×')
+            elif self.calculationsText.get()=="Error!" or (len(self.calculationsText.get())>0 and event not in '01234567890.(' and self.calculationsText.get()[-1] not in '01234567890.)'):
+                self.delete_char() 
             self.calculationsText.set(self.calculationsText.get()+event)
-        elif event.char in '1234567890-+*/$^':
+        elif event.char in '1234567890-+*/$^m.()':
             if event.char == '*': char = '×'
             elif event.char == '/': char = '÷'
             elif event.char == '$': char = '√'
+            elif event.char == 'm': char = 'mod'
             else: char = event.char
+            if event.char == ')' and self.calculationsText.get().count(')')>=self.calculationsText.get().count('('):
+                return None
+            elif len(self.calculationsText.get())>0 and ((self.calculationsText.get()[-1] in '01234567890.' and event.char == '(') or (self.calculationsText.get()[-1] == ')' and event.char in '01234567890.' )):
+                self.add_text('×')
+            elif self.calculationsText.get()=="Error!" or (len(self.calculationsText.get())>0 and event.char not in '01234567890.(' and self.calculationsText.get()[-1] not in '01234567890.)'):
+                self.delete_char()
             self.calculationsText.set(self.calculationsText.get()+char)
         
 
     def delete_char(self,event=None):
-        self.calculationsText.set(self.calculationsText.get()[:-1])
+        if self.calculationsText.get() == "Error!" : self.clear_text()
+        elif self.calculationsText.get()[-3:] == "mod": self.calculationsText.set(self.calculationsText.get()[:-3])
+        else: self.calculationsText.set(self.calculationsText.get()[:-1])
 
     def clear_text(self):
         self.calculationsText.set('')
