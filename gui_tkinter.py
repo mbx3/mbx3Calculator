@@ -1,28 +1,52 @@
 import tkinter as tk
 from tkinter import ttk
 from functools import partial
-from Calculator import calculations
-
+from CalculatorMain import calculations
+from PIL import Image,ImageTk
+import webbrowser
 class GUI:
-    BUTTONS_TEXT=[['(',')','C','<--'],
+    BUTTONS_TEXT=[['(',')','C','⟵'],
                 ['mod','^','√','+'],
                 ['1','2','3','-'],
                 ['4','5','6','×'],
                 ['7','8','9','÷'],
                 ['Setting','0','.','=']]
     
-    COLOR_PALETTES={
+    COLOR_PALETTES = {
         'Light' : ['#FAEDCD','#FEFAE0','#E9EDC9','#A7727D'],
         'Dark' : ['#18122B','#393053','#443C68','#635985'],
         'Blue' : ['#62CDFF','#97DEFF','#C9EEFF','#AA77FF'],
         'Red' : ['#AF0404','#FF0032','#FF0000','#252525'],
         'Green' : ['#14C38E','#B8F1B0','#00FFAB','#E3FCBF'],
         'Yellow' : ['#E7B10A','#F7F1E5','#898121','#4C4B16'],
-        'Jigili' : ['#F94A29','#FCE22A','#30E3DF','#D61355'],
+        'Jigili' : ['#F94A29','#D61355','#30E3DF','#FCE22A'],
         'Gold' : ['#FFCE45','#D4AC2B','#B05E27','#7E370C'],
         'Coffee' : ['#594545','#815B5B','#9E7676','#FFF8EA'],
         'Warm' : ['#630606','#890F0D','#E83A14','#D9CE3F'],
         'Cold' : ['#0E8388','#9E4784','#66347F','#37306B'],
+    }
+
+    SOCIAL_NETWORKS = {
+        'Email'     :   { 
+                        'username'  : 'mbx3.bzr3@gmail.com',
+                        'link'      : '',
+                        'path'      : r'pics/Email.png'
+                        },
+        'GitHub'    :   {
+                        'username'  : 'mbx3',
+                        'link' : r'https://github.com/mbx3',
+                        'path' : r'pics/GitHub.png'
+                        },
+        'LinkedIn'  :   {
+                        'username'  : 'Mohammad Bazrafshan',
+                        'link' : r'https://www.linkedin.com/in/mohammad--bazrafshan/',
+                        'path' : r'pics/LinkedIn.png'
+                        },
+        'Telegram'  :   {
+                        'username'  : 'MBX_3',
+                        'link' : r'https://t.me/MBX_3',
+                        'path' : r'pics/Telegram.png'
+                        },
     }
 
     def __init__(self):
@@ -41,8 +65,9 @@ class GUI:
         self.themesFrame = ttk.Frame(self.root)
         self.themesFrame.grid(row=0,column=0,sticky=tk.NSEW)
         self.themesFrame.grid_columnconfigure((0,1,2,3),weight=1)
-        self.themesFrame.grid_rowconfigure((0,1,2,3),weight=1)
-        theme = tk.StringVar()
+        self.themesFrame.grid_rowconfigure((0,1,2,3,5,6,7,8),weight=1)
+        self.themesFrame.grid_rowconfigure((4,9),weight=2)
+        theme = tk.StringVar(value='Dark')
         ttk.Label(self.themesFrame,text='Theme : ').grid(row=0,column=0,padx=10,pady=5,sticky='nwe')
         for i,cp in enumerate(GUI.COLOR_PALETTES):
             colors = GUI.COLOR_PALETTES[cp]
@@ -56,7 +81,23 @@ class GUI:
                     indicatorcolor=[('selected', colors[1]),
                                     ('hover',colors[2])])
             ttk.Radiobutton(self.themesFrame,style=styleClass,text=cp,variable=theme,value=cp,command=lambda x=cp: self.change_theme(x)).grid(row=(i+1)//4,column=(i+1)%4,padx=10,pady=5,sticky='nwe')
-        ttk.Button(self.themesFrame,text='OK',command=lambda : self.change_frame(self.mainFrame)). grid(row=3,column=1,pady=5,columnspan=2,sticky='swe')
+        ttk.Separator(self.themesFrame). grid(row=3,column=0,pady=5,columnspan=4,sticky='nwe')
+        ttk.Label(self.themesFrame,text="Creator : Mohammad Bazrafshan").grid(row=4,column=0,padx=10,pady=5,columnspan=4,sticky='nw')
+        photos=[]
+        for i,sn in enumerate(GUI.SOCIAL_NETWORKS):
+            username = GUI.SOCIAL_NETWORKS[sn]['username']
+            link = GUI.SOCIAL_NETWORKS[sn]['link']
+            imagePath = GUI.SOCIAL_NETWORKS[sn]['path']
+            img = Image.open(imagePath).resize((20,20))
+            photo = ImageTk.PhotoImage(img)
+            photos.append(photo)
+            txt = sn + ' : ' + username
+            label = ttk.Label(self.themesFrame,text=txt,image=photo,compound="left")
+            label.grid(row=5+i,column=0,sticky='w',columnspan=4,padx=10)
+            if link:
+                label.bind('<Button-1>',lambda x,link=link: self.callback(link))
+                label.config(cursor="hand2")
+        ttk.Button(self.themesFrame,text='OK',command=lambda : self.change_frame(self.mainFrame)). grid(row=9,column=1,pady=5,columnspan=2,sticky='swe')
 
 
         # Create and configure Main Frame
@@ -135,13 +176,16 @@ class GUI:
         color_palette = GUI.COLOR_PALETTES[color_palette]
         self.style.configure('TFrame',background=color_palette[0])
         self.style.configure('TLabel',background=color_palette[0],foreground=color_palette[3],font=('arial',11))
+        self.style.configure('TSeparator',background=color_palette[3])
         self.style.configure('TButton',activebackground=color_palette[0],background=color_palette[0],foreground=color_palette[3],focuscolor=color_palette[0],font=('arial',11))
         self.style.map('TButton',
                 background=[('pressed', color_palette[2]),
                             ('active', color_palette[1]),
                             ('hover', color_palette[2]),
                             ('selected', color_palette[0])])
-        
+
+    def callback(self,url):
+        webbrowser.open_new(url)    
 
 GUI()    
 
