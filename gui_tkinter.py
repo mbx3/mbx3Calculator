@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from functools import partial
-from CalculatorMain import calculations
+from CalculatorMain import calculations,string_work
 from PIL import Image,ImageTk
 import webbrowser
 class GUI:
@@ -27,7 +27,7 @@ class GUI:
     }
 
     SOCIAL_NETWORKS = {
-        'Email'     :   { 
+        'Email'     :   {
                         'username'  : 'mbx3.bzr3@gmail.com',
                         'link'      : '',
                         'path'      : r'pics/Email.png'
@@ -106,7 +106,7 @@ class GUI:
         self.mainFrame.rowconfigure(0, weight=5)
         self.mainFrame.rowconfigure(list(range(1,7)), weight=1)
         self.mainFrame.columnconfigure(list(range(4)), weight=1)
-        self.calculationsText = tk.StringVar()
+        self.calculationsText = tk.StringVar(value="0")
         self.label = ttk.Label(self.mainFrame,textvariable=self.calculationsText)
         self.label.grid(column=0,row=0,padx=2,pady=5,columnspan=4,sticky=tk.NSEW)
         for i in range(4):
@@ -114,7 +114,7 @@ class GUI:
                 txt = GUI.BUTTONS_TEXT[j-1][i]
                 if txt == 'Setting' : btn_func = partial(self.change_frame,self.themesFrame)
                 elif txt == 'C' : btn_func = self.clear_text
-                elif txt == '<--': btn_func = self.delete_char
+                elif txt == '⟵': btn_func = self.delete_char
                 elif txt == '=': btn_func = self.calculate
                 else: btn_func = lambda x=txt: self.add_text(x)
                 btn = ttk.Button(self.mainFrame,text=txt,command=btn_func)
@@ -132,36 +132,21 @@ class GUI:
         self.root.mainloop()    
 
     def add_text(self,event):
+        newtxt = ""
         if type(event) == str:
-            if event == ')' and self.calculationsText.get().count(')')>=self.calculationsText.get().count('('):
-                return None
-            elif len(self.calculationsText.get())>0 and ((self.calculationsText.get()[-1] in '01234567890.' and event == '(') or (self.calculationsText.get()[-1] == ')' and event in '01234567890.' )):
-                self.add_text('×')
-            elif self.calculationsText.get()=="Error!" or (len(self.calculationsText.get())>0 and event not in '01234567890.(' and self.calculationsText.get()[-1] not in '01234567890.)'):
-                self.delete_char() 
-            self.calculationsText.set(self.calculationsText.get()+event)
+            newtxt=event
         elif event.char in '1234567890-+*/$^m.()':
-            if event.char == '*': char = '×'
-            elif event.char == '/': char = '÷'
-            elif event.char == '$': char = '√'
-            elif event.char == 'm': char = 'mod'
-            else: char = event.char
-            if event.char == ')' and self.calculationsText.get().count(')')>=self.calculationsText.get().count('('):
-                return None
-            elif len(self.calculationsText.get())>0 and ((self.calculationsText.get()[-1] in '01234567890.' and event.char == '(') or (self.calculationsText.get()[-1] == ')' and event.char in '01234567890.' )):
-                self.add_text('×')
-            elif self.calculationsText.get()=="Error!" or (len(self.calculationsText.get())>0 and event.char not in '01234567890.(' and self.calculationsText.get()[-1] not in '01234567890.)'):
-                self.delete_char()
-            self.calculationsText.set(self.calculationsText.get()+char)
-        
+            newtxt=event.char
+        if newtxt:
+            self.calculationsText.set(string_work.correction(self.calculationsText.get(),newtxt))    
 
     def delete_char(self,event=None):
         if self.calculationsText.get() == "Error!" : self.clear_text()
         elif self.calculationsText.get()[-3:] == "mod": self.calculationsText.set(self.calculationsText.get()[:-3])
-        else: self.calculationsText.set(self.calculationsText.get()[:-1])
+        else: self.calculationsText.set(string_work.correction(self.calculationsText.get()[:-1]))
 
     def clear_text(self):
-        self.calculationsText.set('')
+        self.calculationsText.set('0')
 
     def change_frame(self,frame:ttk.Frame):
         frame.tkraise()
@@ -185,7 +170,7 @@ class GUI:
                             ('selected', color_palette[0])])
 
     def callback(self,url):
-        webbrowser.open_new(url)    
+        webbrowser.open_new(url)
 
 GUI()    
 
