@@ -1,5 +1,4 @@
 from CalculatorMain.string_work import *
-import re
 
 def Osum(a,b):
     return a+b
@@ -55,6 +54,6 @@ def calculate(txt:str):
         prev_txt = txt
         new_txt = Node(operator_to_function(fpe[1]),float(fpe[0]),float(fpe[2])).calc_node() if type(fpe) == tuple else fpe
         txt = txt[:fppIndex[0]+fpeIndex[0]] + str(new_txt) + txt[fppIndex[0]+1+fpeIndex[1]:]
-        if is_calculation_end(txt): return str(int(float(txt))) if int(float(txt)) == float(txt) else txt
+        if is_calculation_end(txt): return str(int(round(float(txt),15))) if int(round(float(txt),15)) == round(float(txt),15) else str(round(float(txt),15))
         elif prev_txt == txt : raise ValueError("Can't Calculate this expression!")
 

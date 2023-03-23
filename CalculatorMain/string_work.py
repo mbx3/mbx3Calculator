@@ -17,11 +17,11 @@ def first_priority_parenthes(txt:str):
     return (firstIndex,lastIndex), txt[firstIndex:lastIndex+1]
 
 def first_priority_expression(txt:str):
-    m=re.search(r'((?:^-[0-9]*(?:\.[0-9]*)?|[0-9]*(?:\.[0-9]*)?))(\^|\√)(-?[0-9]*(?:\.[0-9]*)?)',txt)
+    m=re.search(r'((?:^-[0-9]+(?:\.[0-9]*)?|[0-9]+(?:\.[0-9]*)?))(\^|\√)(-?[0-9]*(?:\.[0-9]*)?)',txt)
     if m != None: return (m.start(),m.end()-1), m.groups()
-    m=re.search(r'((?:^-[0-9]*(?:\.[0-9]*)?|[0-9]*(?:\.[0-9]*)?))((?:mod)|\×|\÷)(-?[0-9]*(?:\.[0-9]*)?)',txt)
+    m=re.search(r'((?:^-[0-9]+(?:\.[0-9]*)?|[0-9]+(?:\.[0-9]*)?))((?:mod)|\×|\÷)(-?[0-9]*(?:\.[0-9]*)?)',txt)
     if m != None: return (m.start(),m.end()-1), m.groups()
-    m=re.search(r'((?:^-[0-9]*(?:\.[0-9]*)?|[0-9]*(?:\.[0-9]*)?))(\+|\-)(-?[0-9]*(?:\.[0-9]*)?)',txt)
+    m=re.search(r'((?:^-[0-9]+(?:\.[0-9]*)?|[0-9]+(?:\.[0-9]*)?))(\+|\-)(-?[0-9]*(?:\.[0-9]*)?)',txt)
     if m != None: return (m.start(),m.end()-1), m.groups()
     return (0,len(txt)-1), txt
 
@@ -30,7 +30,7 @@ def remove_unnecessary_parentheses(txt:str):
     return out
 
 def is_calculation_end(txt:str):
-    if re.match(r'^-?[0-9]+(?:\.[0-9]*)?$',txt): return True
+    if re.match(r'^\-?[0-9]+(?:\.[0-9]*)?$',txt): return True
     return False
 
 def correction(txt : str, newtxt : str = ""):
@@ -68,6 +68,10 @@ def correction(txt : str, newtxt : str = ""):
     txt = re.sub(r"(\+|\-|\÷|\×|\^|\√|(?:mod))(\+|\÷|\×|\^|\√|(?:mod))",r"\g<2>",txt)
     # 05 --> 5
     txt = re.sub(r"(^|[^\.\d])0(\d)",r"\g<1>\g<2>",txt)
+    # 0- --> -
+    txt = re.sub(r"^0\-$",r"-",txt)
+    # 0+ --> 0
+    txt = re.sub(r"^0(?:\+|\÷|\×|\^|\√|(?:mod))$",r"0",txt)
     #    --> 0
     txt = re.sub(r"^\s*$","0",txt)
     if starttxt != txt : return correction(txt)
